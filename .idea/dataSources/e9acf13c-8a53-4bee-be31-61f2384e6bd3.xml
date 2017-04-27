@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="DatabaseOfAnimals.db">
+  <database-model serializer="dbm" rdbms="SQLITE" format-version="4.0">
+    <root id="1"/>
+    <schema id="2" parent="1">
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <table id="3" parent="2" name="TableOfAnimals"/>
+    <table id="4" parent="2" name="TableOfEmails"/>
+    <column id="5" parent="3" name="NAME">
+      <DataType>CHAR(225)(0,-1)|12</DataType>
+    </column>
+    <column id="6" parent="3" name="TYPE">
+      <Position>1</Position>
+      <DataType>CHAR(225)(0,-1)|12</DataType>
+    </column>
+    <column id="7" parent="3" name="MASS">
+      <Position>2</Position>
+      <DataType>INT(0,-1)|4</DataType>
+    </column>
+    <column id="8" parent="3" name="HEALTH">
+      <Position>3</Position>
+      <DataType>CHAR(225)(0,-1)|12</DataType>
+    </column>
+    <column id="9" parent="4" name="ID">
+      <DataType>CHAR (225)(0,-1)|12</DataType>
+    </column>
+    <column id="10" parent="4" name="EMAIL">
+      <Position>1</Position>
+      <DataType>CHAR(225)(0,-1)|12</DataType>
+    </column>
+    <column id="11" parent="4" name="PASSWORD">
+      <Position>2</Position>
+      <DataType>CHAR(225)(0,-1)|12</DataType>
+    </column>
+    <column id="12" parent="4" name="RECIPIENT">
+      <Position>3</Position>
+      <DataType>CHAR(225)(0,-1)|12</DataType>
+    </column>
+    <column id="13" parent="4" name="CHECKBOX">
+      <Position>4</Position>
+      <DataType>CHAR(225)(0,-1)|12</DataType>
+    </column>
+  </database-model>
+</dataSource>
