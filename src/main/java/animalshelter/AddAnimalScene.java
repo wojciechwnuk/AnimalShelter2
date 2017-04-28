@@ -107,7 +107,7 @@ class AddAnimalScene implements Serializable {
                 }
                 try {
                     editFreeSpaceScene.sendMail();
-               } catch (javax.mail.MessagingException e) {
+                } catch (javax.mail.MessagingException e) {
                     e.printStackTrace();
                 }
 
@@ -141,5 +141,6 @@ class AddAnimalScene implements Serializable {
                 .addAll(backToMainSceneButton, dodajZwierzeLabel, animalChoiceBox, nameHbox, massHbox, healthHbox, addAnimalButton);
         return addAnimalScene;
     }
+
 
 }

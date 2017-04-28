@@ -15,16 +15,17 @@ public class Main extends Application {
     }
 
     public void start(Stage primaryStage) throws IOException {
-        MainScene mainScene = new MainScene();
-
-
-        mainScene.setPrimaryStage(primaryStage);
-
         if (!Database.temp.exists()) {
             Database.temp.createNewFile();
             Database.createTableOfAnimals(Database.connectDatabase(Database.tableOfAnimals), Database.tableOfAnimals);
             Database.createTableOfEmails(Database.connectDatabase(Database.tableOfAnimals), Database.tableOfEmails);
         }
+        MainScene mainScene = new MainScene();
+
+
+        mainScene.setPrimaryStage(primaryStage);
+
+
         importExport.loadList();
 
         primaryStage.setTitle("Animal Shelter Manager");

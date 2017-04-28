@@ -16,10 +16,12 @@ class Database {
     private static String sender = "default";
     private static String password = "default";
     private static String recipient = "default";
-    private static String choiceBox;
+    private static String buttonOnOff = "Włącz";
+
 
     static Connection connectDatabase(String database) {
         Connection connection;
+
 
         try {
             Class.forName("org.sqlite.JDBC");
@@ -62,15 +64,15 @@ class Database {
                     + "EMAIL CHAR(225), "
                     + "PASSWORD CHAR(225),"
                     + "RECIPIENT CHAR(225),"
-                    + "CHECKBOX CHAR(225))";
+                    + "BUTTON CHAR(225))";
             statement.executeUpdate(sqlTab);
 
-            String sqlDefault = "INSERT INTO " + tableOfEmails + "(ID, EMAIL, PASSWORD, RECIPIENT, CHECKBOX )" + "VALUES (" +
+            String sqlDefault = "INSERT INTO " + tableOfEmails + "(ID, EMAIL, PASSWORD, RECIPIENT, BUTTON )" + "VALUES (" +
                     "'MAIN'" + "," +
                     "'" + sender + "'" + "," +
                     "'" + password + "'" + "," +
                     "'" + recipient + "'" + "," +
-                    "'" + choiceBox + "'" + ")";
+                    "'" + buttonOnOff + "'" + ")";
             statement.executeUpdate(sqlDefault);
             connection.close();
             System.out.println("Table Email created correctly");
@@ -118,7 +120,7 @@ class Database {
                     + " SET EMAIL = '" + EmailScene.nadawcaTxtField.getText()
                     + "', PASSWORD='" + EmailScene.paswdField.getText()
                     + "', RECIPIENT= '" + EmailScene.odbiorcaTxtField.getText()
-                    + "', CHECKBOX= '" + EmailScene.choiceBox.getValue()
+                    + "', BUTTON= '" + EmailScene.sendEmail.getText()
                     + "' WHERE ID= 'MAIN';";
             statement.executeUpdate(sqlAddValue);
             connection.close();
@@ -208,27 +210,24 @@ class Database {
         return recip;
     }
 
-    static String getCheckbox() {
+    static String getOnOffButton() {
         Connection connection;
-
+        String button = buttonOnOff;
         try {
             connection = Database.connectDatabase(Database.tableOfEmails);
-            String SQL = "SELECT CHECKBOX from " + Database.tableOfEmails;
+            String SQL = "SELECT BUTTON from " + Database.tableOfEmails;
             assert connection != null;
             ResultSet resultSet = connection.createStatement().executeQuery(SQL);
 
-            choiceBox = resultSet.getString(1);
-
+            button = resultSet.getString(1);
             connection.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return choiceBox;
+        return button;
     }
-
-
 }
 
 

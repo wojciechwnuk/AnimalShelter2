@@ -1,11 +1,13 @@
 package animalshelter;
 
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import lombok.Getter;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -20,7 +22,12 @@ class EmailScene {
     static PasswordField paswdField;
     static TextField nadawcaTxtField;
     static TextField odbiorcaTxtField;
-    static ChoiceBox<String> choiceBox;
+    static String autoEmailButtonOn = "Włącz";
+    static String autoEmailButtonOff = "Wyłącz";
+    static int alertPlaces;
+
+
+    static Button sendEmail = new Button(Database.getOnOffButton());
 
 
     Scene getEmailScene() {
@@ -30,17 +37,15 @@ class EmailScene {
         Scene emailScene = new Scene(emailVbox, 500, 500);
 
         Button backToMainSceneButton = new Button("Return");
+
+
         MainScene glownastage = new MainScene();
-        backToMainSceneButton.setOnAction(event -> MainScene.getPrimaryStage().setScene(glownastage.getMainScene()));
+        backToMainSceneButton.setOnAction(event -> {
+            Database.addEmail(Database.tableOfEmails);
+            System.out.println("Zapisano wartości");
+            MainScene.getPrimaryStage().setScene(glownastage.getMainScene());
+        });
 
-        HBox chceszEmailHbox = new HBox(50);
-        Label czyChceszAutoLabel = new Label("Włącz automatyczne wiadomości email,\n gdy kończy się miejsce w schronisku");
-
-        choiceBox = new ChoiceBox<>();
-        choiceBox.getItems().addAll("Nie", "Tak");
-        choiceBox.getSelectionModel().selectFirst();
-
-        chceszEmailHbox.getChildren().addAll(czyChceszAutoLabel, choiceBox);
 
         Label wpiszEmail = new Label("Wpisz e-mail, na jaki ma zostać wysłana wiadomość: ");
         odbiorcaTxtField = new TextField(Database.getRecipient());
@@ -55,32 +60,38 @@ class EmailScene {
         nadawcaTxtField = new TextField(Database.getSender());
         paswdField = new PasswordField();
         paswdField.setText(Database.getPassword());
+        sendEmail.setText(Database.getOnOffButton());
 
         daneHbox.getChildren().addAll(nadawcaTxtField, paswdField);
+        Label howMuchLabel = new Label("Przy ilu pozostałych miejsach wysłać email? (Domyślnie: 5)");
 
-        Label ileLabel = new Label("Przy ilu wolnych miejscach wysłać e-mail z powiadomieniem?");
+        Label onOffLabel = new Label();
+        if (sendEmail.getText().equals(autoEmailButtonOn)) {
+            sendEmail.setText(autoEmailButtonOn);
+            onOffLabel.setText("Auto-mail jest wyłączony");
+            onOffLabel.setTextFill(Color.RED);
+        }else {
+            sendEmail.setText(autoEmailButtonOff);
+            onOffLabel.setText("Auto-mail jest włączony");
+            onOffLabel.setTextFill(Color.GREEN);
+        }
 
-        Button sendEmail = new Button("Wyslij mail");
         sendEmail.setOnAction(event -> {
-            try {
-                setEmailProperties();
-            } catch (javax.mail.MessagingException e) {
-                e.printStackTrace();
+
+            if (sendEmail.getText().equals(autoEmailButtonOn)) {
+                sendEmail.setText(autoEmailButtonOff);
+                onOffLabel.setText("Auto-mail jest włączony");
+                onOffLabel.setTextFill(Color.GREEN);
+
+            } else {
+                sendEmail.setText(autoEmailButtonOn);
+                onOffLabel.setText("Auto-mail jest wyłączony");
+                onOffLabel.setTextFill(Color.RED);
             }
 
         });
 
-        Button saveMailButton = new Button("Zapisz");
-//        if (choiceBox.getValue()=="Nie"){
-//            saveMailButton.setDisable(true);
-//        }
-        saveMailButton.setOnAction(event -> {
-            Database.addEmail(Database.tableOfEmails);
-            System.out.println(nadawcaTxtField.getText());
-        });
-
-
-        emailVbox.getChildren().addAll(backToMainSceneButton, chceszEmailHbox, wpiszEmail, odbiorcaTxtField, labeleHbox, daneHbox, ileLabel, sendEmail, saveMailButton);
+        emailVbox.getChildren().addAll(backToMainSceneButton, wpiszEmail, odbiorcaTxtField, labeleHbox, daneHbox, howMuchLabel, onOffLabel, sendEmail);
         return emailScene;
     }
 
@@ -106,7 +117,7 @@ class EmailScene {
         generateMailMessage.addRecipient(Message.RecipientType.TO, new InternetAddress(odbiorcaTxtField.getText()));
 
         generateMailMessage.setSubject("Uwaga!");
-        String emailBody = "Kończy się miejsce w schronisku - pozostało " + freePlaces + " wolnych miejsc!";
+        String emailBody = "Konczy sie miejsce w schronisku - pozostalo " + freePlaces + " wolnych miejsc!";
         generateMailMessage.setContent(emailBody, "text/html");
         System.out.println("Session configuration - ok!");
 
