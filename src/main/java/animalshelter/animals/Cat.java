@@ -6,4 +6,7 @@ package animalshelter.animals;
     public Cat(String type, String mass, String name, String health) {
         super(type, mass, name, health);
     }
-}
+
+     public Cat() {
+     }
+ }

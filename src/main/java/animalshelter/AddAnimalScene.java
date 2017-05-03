@@ -14,6 +14,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -75,6 +78,14 @@ class AddAnimalScene implements Serializable {
         Button addAnimalButton = new Button("Dodaj!");
 
         addAnimalButton.setOnAction(event -> {
+            try {
+                compareIfNameExists();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
             EditFreeSpaceScene editFreeSpaceScene = new EditFreeSpaceScene();
             editFreeSpaceScene.sendAlertEmail();
 
@@ -128,5 +139,46 @@ class AddAnimalScene implements Serializable {
         return addAnimalScene;
     }
 
+    void compareIfNameExists() throws SQLException {
 
+
+        String result = databaseNamesToList().stream()
+                .filter(x -> nameTextField.getText().equals(x.getName()))
+                .map(Animal::getName)
+                .findAny()
+                .orElse(null);
+
+        System.out.println(result);
+
+    }
+
+    List<Animal> databaseNamesToList() throws SQLException {
+        Connection connection;
+        connection = Database.connectDatabase(Database.tableOfAnimals);
+        String SQL = "SELECT NAME, HEALTH from " + Database.tableOfAnimals;
+        assert connection != null;
+        ResultSet resultSet = connection.createStatement().executeQuery(SQL);
+        List<Animal> animals = new ArrayList<>();
+        while (resultSet.next()) {
+            animals.add(mapToAnimal(resultSet));
+        }
+        connection.close();
+     
+        return animals;
+    }
+
+    Animal mapToAnimal(ResultSet resultSet) throws SQLException {
+        Animal animal2 = null;
+        if (animalChoiceBox.getValue().equals("Dog")) {
+            animal2 = new Dog();
+        } else if (animalChoiceBox.getValue().equals("Cat")) {
+            animal2 = new Cat();
+        } else if (animalChoiceBox.getValue().equals("Degu")) {
+            animal2 = new Degu();
+        }
+
+        animal2.setName(resultSet.getString("NAME"));
+
+        return animal2;
+    }
 }
