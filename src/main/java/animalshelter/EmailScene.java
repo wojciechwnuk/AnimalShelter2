@@ -3,11 +3,13 @@ package animalshelter;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import lombok.Getter;
 
 import javax.mail.Message;
 import javax.mail.Session;
@@ -24,10 +26,11 @@ class EmailScene {
     static TextField odbiorcaTxtField;
     static String autoEmailButtonOn = "Włącz";
     static String autoEmailButtonOff = "Wyłącz";
-    static int alertPlaces;
+    static int alertPlaces = 3;
 
 
-    static Button sendEmail = new Button(Database.getOnOffButton());
+    static Button switchButton = new Button(Database.getOnOffButton());
+
 
 
     Scene getEmailScene() {
@@ -36,7 +39,7 @@ class EmailScene {
         emailVbox.setPadding(new Insets(5));
         Scene emailScene = new Scene(emailVbox, 500, 500);
 
-        Button backToMainSceneButton = new Button("Return");
+        Button backToMainSceneButton = new Button("Save and return");
 
 
         MainScene glownastage = new MainScene();
@@ -49,6 +52,9 @@ class EmailScene {
 
         Label wpiszEmail = new Label("Wpisz e-mail, na jaki ma zostać wysłana wiadomość: ");
         odbiorcaTxtField = new TextField(Database.getRecipient());
+        if (switchButton.getText().equals(autoEmailButtonOn)) {
+            odbiorcaTxtField.setDisable(true);
+        }else odbiorcaTxtField.setDisable(false);
 
 
         HBox labeleHbox = new HBox(100);
@@ -58,45 +64,83 @@ class EmailScene {
 
         HBox daneHbox = new HBox(20);
         nadawcaTxtField = new TextField(Database.getSender());
+        if (switchButton.getText().equals(autoEmailButtonOn)) {
+            nadawcaTxtField.setDisable(true);
+        }else nadawcaTxtField.setDisable(false);
+
         paswdField = new PasswordField();
         paswdField.setText(Database.getPassword());
-        sendEmail.setText(Database.getOnOffButton());
+        if (switchButton.getText().equals(autoEmailButtonOn)) {
+            paswdField.setDisable(true);
+        }else paswdField.setDisable(false);
+
+        switchButton.setText(Database.getOnOffButton());
+
 
         daneHbox.getChildren().addAll(nadawcaTxtField, paswdField);
-        Label howMuchLabel = new Label("Przy ilu pozostałych miejsach wysłać email? (Domyślnie: 5)");
+        Label howMuchLabel = new Label("Przy ilu pozostałych miejsach wysłać email?");
+        HBox buttonsHbox = new HBox();
+        buttonsHbox.setSpacing(10);
+        Button plusBtn = new Button("+");
+        Button minusBtn = new Button("-");
+        Label alertPlacesLabel = new Label();
+        alertPlacesLabel.setText(String.valueOf(alertPlaces));
+
+        plusBtn.setOnAction(event -> {
+            if (alertPlaces > 0 && alertPlaces < 5) {
+                alertPlaces++;
+            }
+            alertPlacesLabel.setText(String.valueOf(alertPlaces));
+        });
+
+        minusBtn.setOnAction(event -> {
+            if (alertPlaces > 1 && alertPlaces <= 5) {
+                alertPlaces--;
+            }
+            alertPlacesLabel.setText(String.valueOf(alertPlaces));
+        });
+
+        buttonsHbox.getChildren().addAll(plusBtn, alertPlacesLabel, minusBtn);
+
 
         Label onOffLabel = new Label();
-        if (sendEmail.getText().equals(autoEmailButtonOn)) {
-            sendEmail.setText(autoEmailButtonOn);
+        if (switchButton.getText().equals(autoEmailButtonOn)) {
+            switchButton.setText(autoEmailButtonOn);
             onOffLabel.setText("Auto-mail jest wyłączony");
             onOffLabel.setTextFill(Color.RED);
-        }else {
-            sendEmail.setText(autoEmailButtonOff);
+        } else {
+            switchButton.setText(autoEmailButtonOff);
             onOffLabel.setText("Auto-mail jest włączony");
             onOffLabel.setTextFill(Color.GREEN);
         }
 
-        sendEmail.setOnAction(event -> {
+        switchButton.setOnAction(event -> {
 
-            if (sendEmail.getText().equals(autoEmailButtonOn)) {
-                sendEmail.setText(autoEmailButtonOff);
+            if (switchButton.getText().equals(autoEmailButtonOn)) {
+                switchButton.setText(autoEmailButtonOff);
                 onOffLabel.setText("Auto-mail jest włączony");
                 onOffLabel.setTextFill(Color.GREEN);
+                paswdField.setDisable(false);
+                nadawcaTxtField.setDisable(false);
+                odbiorcaTxtField.setDisable(false);
 
             } else {
-                sendEmail.setText(autoEmailButtonOn);
+                switchButton.setText(autoEmailButtonOn);
                 onOffLabel.setText("Auto-mail jest wyłączony");
                 onOffLabel.setTextFill(Color.RED);
+                paswdField.setDisable(true);
+                nadawcaTxtField.setDisable(true);
+                odbiorcaTxtField.setDisable(true);
             }
 
         });
 
-        emailVbox.getChildren().addAll(backToMainSceneButton, wpiszEmail, odbiorcaTxtField, labeleHbox, daneHbox, howMuchLabel, onOffLabel, sendEmail);
+        emailVbox.getChildren().addAll(backToMainSceneButton, wpiszEmail, odbiorcaTxtField, labeleHbox, daneHbox, howMuchLabel, buttonsHbox, onOffLabel, switchButton);
         return emailScene;
     }
 
 
-    void setEmailProperties() throws javax.mail.MessagingException {
+    void sendEmail() throws javax.mail.MessagingException {
         Properties mailServerProperties;
         Session getMailSession;
         MimeMessage generateMailMessage;

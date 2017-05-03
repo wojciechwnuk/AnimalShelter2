@@ -20,7 +20,8 @@ public abstract class Animal implements Serializable {
         this.type=type;
             }
 
-
+    public Animal() {
+    }
 
     public String getType() {
         return type;

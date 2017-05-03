@@ -26,7 +26,6 @@ class Database {
         try {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + temp);
-            System.out.println("Database connection established");
 
         } catch (Exception e) {
             System.err.println("Database connection error " + e.getMessage());
@@ -120,7 +119,7 @@ class Database {
                     + " SET EMAIL = '" + EmailScene.nadawcaTxtField.getText()
                     + "', PASSWORD='" + EmailScene.paswdField.getText()
                     + "', RECIPIENT= '" + EmailScene.odbiorcaTxtField.getText()
-                    + "', BUTTON= '" + EmailScene.sendEmail.getText()
+                    + "', BUTTON= '" + EmailScene.switchButton.getText()
                     + "' WHERE ID= 'MAIN';";
             statement.executeUpdate(sqlAddValue);
             connection.close();
@@ -229,6 +228,8 @@ class Database {
         return button;
     }
 }
+
+
 
 
 

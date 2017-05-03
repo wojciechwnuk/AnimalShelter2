@@ -20,13 +20,10 @@ import java.util.Objects;
 
 class AddAnimalScene implements Serializable {
 
-    static List<Animal> listOfAnimals = new ArrayList<>();
-    private static ChoiceBox<String> animalChoiceBox = new ChoiceBox<>();
-    private static TextField nameTextField = new TextField();
-    private static TextField massTextField = new TextField();
-    private static ChoiceBox<String> healthChoiceBox = new ChoiceBox<>();
-    private EditFreeSpaceScene editFreeSpaceScene = new EditFreeSpaceScene();
-
+    private ChoiceBox<String> animalChoiceBox = new ChoiceBox<>();
+    private TextField nameTextField = new TextField();
+    private TextField massTextField = new TextField();
+    private ChoiceBox<String> healthChoiceBox = new ChoiceBox<>();
     private static Animal animal;
 
     static Animal getAnimal() {
@@ -78,7 +75,8 @@ class AddAnimalScene implements Serializable {
         Button addAnimalButton = new Button("Dodaj!");
 
         addAnimalButton.setOnAction(event -> {
-
+            EditFreeSpaceScene editFreeSpaceScene = new EditFreeSpaceScene();
+            editFreeSpaceScene.sendAlertEmail();
 
             if (massTextField.getText().isEmpty() || nameTextField.getText().isEmpty() || healthChoiceBox.getValue() == null || animalChoiceBox.getValue() == null) {
                 Alert alertAddingError = new Alert(Alert.AlertType.ERROR);
@@ -105,11 +103,6 @@ class AddAnimalScene implements Serializable {
                     Database.connectDatabase(Database.tableOfAnimals);
                     Database.addValue(animal, Database.tableOfAnimals);
                 }
-                try {
-                    editFreeSpaceScene.sendMail();
-                } catch (javax.mail.MessagingException e) {
-                    e.printStackTrace();
-                }
 
                 Alert alertAddedAnimal = new Alert(Alert.AlertType.INFORMATION);
                 alertAddedAnimal.setTitle("Information Dialog");
@@ -118,13 +111,6 @@ class AddAnimalScene implements Serializable {
 
                 alertAddedAnimal.showAndWait();
 
-
-                try {
-                    editFreeSpaceScene.sendMail();
-
-                } catch (javax.mail.MessagingException e) {
-                    e.printStackTrace();
-                }
 
                 System.out.println(massTextField.getText() + " " + nameTextField.getText() + " " + healthChoiceBox.getValue());
             } else {

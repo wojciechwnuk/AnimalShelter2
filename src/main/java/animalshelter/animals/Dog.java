@@ -5,4 +5,7 @@ package animalshelter.animals;
       public Dog(String type, String mass, String name, String health) {
          super(type, mass, name, health);
      }
+
+     public Dog() {
+     }
  }

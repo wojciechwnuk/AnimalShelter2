@@ -21,7 +21,8 @@ public class Main extends Application {
             Database.createTableOfEmails(Database.connectDatabase(Database.tableOfAnimals), Database.tableOfEmails);
         }
         MainScene mainScene = new MainScene();
-
+        EmailScene emailScene = new EmailScene();
+        emailScene.getEmailScene();
 
         mainScene.setPrimaryStage(primaryStage);
 
