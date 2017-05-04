@@ -13,6 +13,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -79,8 +82,14 @@ class AddAnimalScene implements Serializable {
 
         addAnimalButton.setOnAction(event -> {
             try {
-                compareIfNameExists();
-
+                if (compareIfNameExists() != null) {
+                    Alert alertAddingError = new Alert(Alert.AlertType.ERROR);
+                    alertAddingError.setTitle("Error Dialog");
+                    alertAddingError.setHeaderText("Zwierzę o takim imieniu jest już w schronisku!");
+                    alertAddingError.setContentText("Proszę nadać inne imię!");
+                    alertAddingError.showAndWait();
+                    return;
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -95,6 +104,14 @@ class AddAnimalScene implements Serializable {
                 alertAddingError.setHeaderText("Błąd w wypełnieniu pól!");
                 alertAddingError.setContentText("Proszę wypełnić wszystkie pola cech!");
                 alertAddingError.showAndWait();
+
+            } else if (checkIfDouble() == null) {
+                Alert alertAddingError = new Alert(Alert.AlertType.ERROR);
+                alertAddingError.setTitle("Error Dialog");
+                alertAddingError.setHeaderText("Błędne dane w polu: masa!");
+                alertAddingError.setContentText("Proszę wpisać cyfrę całkowitą, lub zmiennoprzecinkową rozdzieloną kropką!");
+                alertAddingError.showAndWait();
+
 
             } else if (EditFreeSpaceScene.places > Database.databazeSize()) {
 
@@ -139,23 +156,20 @@ class AddAnimalScene implements Serializable {
         return addAnimalScene;
     }
 
-    void compareIfNameExists() throws SQLException {
-
+    String compareIfNameExists() throws SQLException {
 
         String result = databaseNamesToList().stream()
                 .filter(x -> nameTextField.getText().equals(x.getName()))
                 .map(Animal::getName)
                 .findAny()
                 .orElse(null);
-
-        System.out.println(result);
-
+        return result;
     }
 
     List<Animal> databaseNamesToList() throws SQLException {
         Connection connection;
         connection = Database.connectDatabase(Database.tableOfAnimals);
-        String SQL = "SELECT NAME, HEALTH from " + Database.tableOfAnimals;
+        String SQL = "SELECT NAME from " + Database.tableOfAnimals;
         assert connection != null;
         ResultSet resultSet = connection.createStatement().executeQuery(SQL);
         List<Animal> animals = new ArrayList<>();
@@ -163,7 +177,7 @@ class AddAnimalScene implements Serializable {
             animals.add(mapToAnimal(resultSet));
         }
         connection.close();
-     
+
         return animals;
     }
 
@@ -181,4 +195,18 @@ class AddAnimalScene implements Serializable {
 
         return animal2;
     }
+
+    Double checkIfDouble() {
+        Double mass;
+
+        try {
+            mass = Double.parseDouble(massTextField.getText());
+
+        } catch (NumberFormatException e) {
+            return null;
+        }
+        return mass;
+    }
 }
+
+

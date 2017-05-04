@@ -1,6 +1,10 @@
 package animalshelter;
 
+import animalshelter.animals.Animal;
+import javafx.scene.control.Alert;
+
 import java.io.*;
+import java.util.ArrayList;
 
 
 class ImportExport {
@@ -32,4 +36,7 @@ class ImportExport {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }}
-}}
+}
+    String path1 = "lista.ser";
+
+ }

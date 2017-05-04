@@ -64,7 +64,14 @@ class TableOfAnimalsSQLScene {
         tableView.setItems(listaDoTabeli);
 
         Button deleteButton = new Button("Usuń zaznaczone zwierzę");
-        deleteButton.setOnAction(event -> deleteAnimal());
+        if (listaDoTabeli.isEmpty()) {
+            deleteButton.setDisable(true);
+        }
+        deleteButton.setOnAction(event -> {deleteAnimal();
+            if (listaDoTabeli.isEmpty()){
+                deleteButton.setDisable(true);
+
+            }});
 
         Button backToMainSceneButton = new Button("Return");
         MainScene glownastage = new MainScene();
@@ -77,7 +84,6 @@ class TableOfAnimalsSQLScene {
     private void deleteAnimal() {
         String row = tableView.getSelectionModel().getSelectedItem().toString();
         String name = row.substring(row.indexOf("[") + 1, row.indexOf(','));
-        System.out.println(name);
 
         tableView.getItems().removeAll(
                 tableView.getSelectionModel().getSelectedItems()
@@ -91,5 +97,6 @@ class TableOfAnimalsSQLScene {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
     }
 }
