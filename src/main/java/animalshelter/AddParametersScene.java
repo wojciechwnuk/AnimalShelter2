@@ -15,9 +15,12 @@ class AddParametersScene {
 
         Button backToMainSceneButton = new Button("Return");
         MainScene glownastage = new MainScene();
-        backToMainSceneButton.setOnAction(event -> MainScene.getPrimaryStage().setScene(glownastage.getMainScene()));
+        backToMainSceneButton.setOnAction(event -> {MainScene.getPrimaryStage().setScene(glownastage.getMainScene());
+          AddAnimalScene addAnimalScene = new AddAnimalScene();
+          addAnimalScene.importList();
+        });
 
-
+        addParameteresVbox.getChildren().addAll(backToMainSceneButton);
 
 
         return addParameteresScene;

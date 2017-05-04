@@ -17,6 +17,7 @@ class Database {
     private static String password = "default";
     private static String recipient = "default";
     private static String buttonOnOff = "Włącz";
+    private static String type1 = null;
 
 
     static Connection connectDatabase(String database) {
@@ -227,6 +228,24 @@ class Database {
 
         return button;
     }
+    static String getType() {
+        Connection connection;
+        String type = type1;
+        try {
+            connection = Database.connectDatabase(Database.tableOfAnimals);
+            String SQL = "SELECT TYPE from " + Database.tableOfAnimals;
+            assert connection != null;
+            ResultSet resultSet = connection.createStatement().executeQuery(SQL);
+
+            type = resultSet.getString(1);
+            connection.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return type;
+    }
+
 }
 
 

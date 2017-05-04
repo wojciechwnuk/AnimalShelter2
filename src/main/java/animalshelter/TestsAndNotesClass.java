@@ -6,6 +6,7 @@ package animalshelter;
 
 
 import animalshelter.animals.Animal;
+import animalshelter.animals.Degu;
 import javafx.scene.control.Alert;
 
 import java.io.*;
@@ -15,24 +16,28 @@ import java.util.ArrayList;
 
 public class TestsAndNotesClass {
     String s = "141";
-    String path1 = "lista.ser";
-    AddAnimalScene addAnimalScene = new AddAnimalScene();
-
-    public static void main(String[] args) throws SQLException {
-        TestsAndNotesClass testsAndNotesClass = new TestsAndNotesClass();
-        testsAndNotesClass.importList();
-    }
+    String path1 = "lista.txt";
+    ArrayList<Animal> lista = new ArrayList<>();
 
 
-    void importList() {
-        try {
-            FileOutputStream fout = new FileOutputStream(path1);
-            ObjectOutputStream oos = new ObjectOutputStream(fout);
-            oos.writeObject(addAnimalScene.databaseNamesToList());
-            oos.close();
-
-        } catch (IOException | SQLException e) {
-            e.printStackTrace();
-        }
-    }
+//
+//    void importList() {
+//        try {
+//
+//
+//            String sep = ":";
+//            FileWriter writer = new FileWriter("output.txt");
+//            for(Animal str: databaseNamesToList() ) {
+//                writer.write(String.valueOf(str.getMass()+sep+str.getName()+sep+str.getHealth()+sep+
+//                        str.getType()+System.lineSeparator()));
+//
+//            }
+//            writer.close();
+//
+//        } catch (IOException e){
+//            e.printStackTrace();
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

@@ -33,14 +33,18 @@ class MainScene {
         MenuBar menuBar = new MenuBar();
         //menu plik
         Menu menuFile = new Menu("Plik");
-        MenuItem loadFile = new MenuItem("Wczytaj bazę");
-        ImportExport impEx = new ImportExport();
-        loadFile.setOnAction(event -> impEx.loadList());
+        AddAnimalScene addAnimalScene = new AddAnimalScene();
 
-        MenuItem saveFile = new MenuItem("Zapisz bazę");
-        saveFile.setOnAction(event -> impEx.saveList());
+        MenuItem saveFile = new MenuItem("Zapisz bazę do .txt");
+        saveFile.setOnAction(event ->{addAnimalScene.importList();
+            Alert alertAddedAnimal = new Alert(Alert.AlertType.INFORMATION);
+            alertAddedAnimal.setTitle("Information Dialog");
+            alertAddedAnimal.setHeaderText(null);
+            alertAddedAnimal.setContentText("Lista poprawnie zapisana do pliku .txt (resources/output.txt)");
+            alertAddedAnimal.showAndWait();
+        });
 
-        menuFile.getItems().addAll(loadFile, saveFile);
+        menuFile.getItems().addAll(saveFile);
 
         // menu baza zwierzat
         Menu menuBaza = new Menu("Baza zwierząt");

@@ -4,7 +4,6 @@ import animalshelter.animals.Animal;
 import animalshelter.animals.Cat;
 import animalshelter.animals.Degu;
 import animalshelter.animals.Dog;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.MessagingException;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,10 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -136,9 +132,7 @@ class AddAnimalScene implements Serializable {
                 alertAddedAnimal.setTitle("Information Dialog");
                 alertAddedAnimal.setHeaderText(null);
                 alertAddedAnimal.setContentText("Zwierzę poprawnie dodano do bazy danych :) ");
-
                 alertAddedAnimal.showAndWait();
-
 
                 System.out.println(massTextField.getText() + " " + nameTextField.getText() + " " + healthChoiceBox.getValue());
             } else {
@@ -148,7 +142,6 @@ class AddAnimalScene implements Serializable {
                 alertAddingError.setContentText("Proszę zwiększyć ilość dostępnych miejsc, lub usunąć zwierzę.");
                 alertAddingError.showAndWait();
             }
-
         });
 
         addAnimalVbox.getChildren()
@@ -156,20 +149,19 @@ class AddAnimalScene implements Serializable {
         return addAnimalScene;
     }
 
-    String compareIfNameExists() throws SQLException {
+    private String compareIfNameExists() throws SQLException {
 
-        String result = databaseNamesToList().stream()
+        return databaseNamesToList().stream()
                 .filter(x -> nameTextField.getText().equals(x.getName()))
                 .map(Animal::getName)
                 .findAny()
                 .orElse(null);
-        return result;
     }
 
-    List<Animal> databaseNamesToList() throws SQLException {
+    private List<Animal> databaseNamesToList() throws SQLException {
         Connection connection;
         connection = Database.connectDatabase(Database.tableOfAnimals);
-        String SQL = "SELECT NAME from " + Database.tableOfAnimals;
+        String SQL = "SELECT NAME, MASS, HEALTH, TYPE from " + Database.tableOfAnimals;
         assert connection != null;
         ResultSet resultSet = connection.createStatement().executeQuery(SQL);
         List<Animal> animals = new ArrayList<>();
@@ -181,22 +173,25 @@ class AddAnimalScene implements Serializable {
         return animals;
     }
 
-    Animal mapToAnimal(ResultSet resultSet) throws SQLException {
+    private Animal mapToAnimal(ResultSet resultSet) throws SQLException {
         Animal animal2 = null;
-        if (animalChoiceBox.getValue().equals("Dog")) {
+        if (Database.getType().equals("Dog")) {
             animal2 = new Dog();
-        } else if (animalChoiceBox.getValue().equals("Cat")) {
+        } else if (Database.getType().equals("Cat")) {
             animal2 = new Cat();
-        } else if (animalChoiceBox.getValue().equals("Degu")) {
+        } else if (Database.getType().equals("Degu")) {
             animal2 = new Degu();
         }
 
         animal2.setName(resultSet.getString("NAME"));
+        animal2.setMass(resultSet.getString("MASS"));
+        animal2.setHealth(resultSet.getString("HEALTH"));
+        animal2.setType(resultSet.getString("TYPE"));
 
         return animal2;
     }
 
-    Double checkIfDouble() {
+    private Double checkIfDouble() {
         Double mass;
 
         try {
@@ -206,6 +201,21 @@ class AddAnimalScene implements Serializable {
             return null;
         }
         return mass;
+    }
+
+    void importList() {
+        try {
+            String sep = ":";
+            FileWriter writer = new FileWriter("resources/output.txt");
+            for (Animal str : databaseNamesToList()) {
+                writer.write(String.valueOf(str.getType() + sep + str.getName() + sep + str.getMass() + sep +
+                        str.getHealth() + System.lineSeparator()));
+            }
+            writer.close();
+
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
 

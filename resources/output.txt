@@ -1,0 +1,3 @@
+Dog:Ciczapik:12:Bardzo dobry
+Dog:Jalusia:12:Bardzo dobry
+Degu:Sipupka:3:Bardzo dobry
